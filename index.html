@@ -9,7 +9,7 @@
     <script>
         (function(){
             emailjs.init({
-                publicKey: "ВАШ_PUBLIC_KEY", // <-- замените
+                publicKey: "eK7JgxrdbdZ3fGVo6", // <-- замените
             });
         })();
     </script>
@@ -923,7 +923,7 @@
                 sendLabel.textContent = 'Отправка...';
                 sendStatus.textContent = 'Отправляем письмо...';
 
-                await emailjs.send('ВАШ_SERVICE_ID', 'ВАШ_TEMPLATE_ID', templateParams); // <-- замените
+                await emailjs.send('service_zccm7qr', 'template_e1di81m', templateParams); // <-- замените
 
                 // Успех
                 sendBtn.classList.add('success');
