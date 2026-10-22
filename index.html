@@ -9,7 +9,7 @@
     <script>
         (function(){
             emailjs.init({
-                publicKey: "eK7JgxrdbdZ3fGVo6", // <-- замените на ваш Public Key
+                publicKey: "eK7JgxrdbdZ3fGVo6", // Ваш Public Key
             });
         })();
     </script>
@@ -425,7 +425,6 @@
     </div>
 
     <div class="main-grid">
-        <!-- Левая часть: превью фото / камера -->
         <div class="photo-area">
             <div class="preview-container" id="previewContainer">
                 <div class="placeholder">📷 Фото не загружено<br><span style="font-size:0.8rem;">Загрузите или сделайте снимок</span></div>
@@ -437,7 +436,6 @@
             <div class="status-bar" id="statusBar"></div>
         </div>
 
-        <!-- Правая часть: флаг + название -->
         <div class="result-area" id="resultArea">
             <div class="flag-big" id="flagDisplay">🌍</div>
             <div class="country-name" id="countryName">—</div>
@@ -445,13 +443,11 @@
         </div>
     </div>
 
-    <!-- ОТКРЫТКА + ОТПРАВКА НА EMAIL -->
     <div class="postcard-section">
         <div class="postcard-wrapper">
             <div class="postcard" id="postcard">
                 <div class="postcard-photo">
                     <img id="postcardPhoto" alt="Открытка" crossorigin="anonymous">
-                    <!-- Логотип конференции Export Online'26 (слева сверху) -->
                     <div class="postcard-logo left" title="Export Online'26">
                         <svg viewBox="0 0 190 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Export Online 26">
                             <rect x="0" y="4" width="182" height="32" rx="8" fill="#0b3d91"/>
@@ -459,7 +455,6 @@
                             <text x="148" y="26" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#ffd54a">'26</text>
                         </svg>
                     </div>
-                    <!-- Логотип Российского экспортного центра (справа сверху) -->
                     <div class="postcard-logo right" title="Российский экспортный центр">
                         <svg viewBox="0 0 210 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Российский экспортный центр">
                             <rect x="0" y="4" width="202" height="32" rx="8" fill="#ffffff"/>
@@ -494,7 +489,6 @@
 
 <script>
     (function() {
-        // ---------- БАЗА СТРАН (ISO-код + название) ----------
         const COUNTRIES = [
             { name: 'Россия', code: 'ru' }, { name: 'США', code: 'us' }, { name: 'Китай', code: 'cn' },
             { name: 'Германия', code: 'de' }, { name: 'Франция', code: 'fr' }, { name: 'Великобритания', code: 'gb' },
@@ -534,7 +528,6 @@
             { name: 'Тувалу', code: 'tv' }, { name: 'Кирибати', code: 'ki' },
         ];
 
-        // ---------- DOM элементы ----------
         const uploadBtn = document.getElementById('uploadBtn');
         const cameraBtn = document.getElementById('cameraBtn');
         const fileInput = document.getElementById('fileInput');
@@ -547,25 +540,21 @@
         const countryName = document.getElementById('countryName');
         const hashHint = document.getElementById('hashHint');
 
-        // Открытка
         const postcard = document.getElementById('postcard');
         const postcardPhoto = document.getElementById('postcardPhoto');
         const postcardFlag = document.getElementById('postcardFlag');
         const postcardCaption = document.getElementById('postcardCaption');
 
-        // Отправка
         const emailInput = document.getElementById('emailInput');
         const sendBtn = document.getElementById('sendBtn');
         const sendStatus = document.getElementById('sendStatus');
         const sendLabel = sendBtn.querySelector('.send-label');
 
-        // ---------- Переменные ----------
         let stream = null;
         let currentMode = 'idle';
         let processing = false;
         let lastCountry = null;
 
-        // ---------- Вспомогательные функции ----------
         function setStatus(text, isError = false) {
             statusBar.textContent = text || '';
             statusBar.style.color = isError ? '#ff9f9f' : '#a0c0e0';
@@ -690,7 +679,6 @@
             setStatus('📂 Фото загружено');
         }
 
-        // ---------- Камера ----------
         async function startCamera() {
             if (stream) stopCamera();
             try {
@@ -769,13 +757,12 @@
             fileInput.value = '';
         }
 
-        // ---------- Отправка ----------
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
 
         async function uploadToImageBan(imageDataUrl) {
-            const SECRET_KEY = 'XX7T7VcZtIET2banpnspCGt0QZ89Gu0Fve5'; // Ваш ключ
+            const SECRET_KEY = 'XX7T7VcZtIET2banpnspCGt0QZ89Gu0Fve5';
             const blob = await (await fetch(imageDataUrl)).blob();
 
             const formData = new FormData();
@@ -815,38 +802,33 @@
             sendStatus.style.color = '#a0c0e0';
 
             try {
-                // Делаем снимок блока открытки
-               const canvas = await html2canvas(postcard, {
-                    useCORS: true, 
-                    scale: 2, 
-                    backgroundColor: '#ffffff', // Задаем белый фон (чтобы не было прозрачности)
-                    width: postcard.offsetWidth, // Жестко фиксируем ширину
-                    height: postcard.offsetHeight, // Жестко фиксируем высоту
-                    windowWidth: postcard.offsetWidth, // Убираем влияние скролла страницы
-                    windowHeight: postcard.offsetHeight,
-                    scrollX: 0,
-                    scrollY: 0
-                });
-                
-                const postcardDataUrl = canvas.toDataURL('image/png');
-
-                sendLabel.textContent = 'Загрузка...';
-                sendStatus.textContent = 'Сохраняем открытку...';
-                
-                  const originalShadow = postcard.style.boxShadow;
+                // Временно убираем тень и скругления, чтобы не было артефактов при съемке
+                const originalShadow = postcard.style.boxShadow;
                 const originalBorderRadius = postcard.style.borderRadius;
                 postcard.style.boxShadow = 'none';
                 postcard.style.borderRadius = '0px';
 
+                // Делаем снимок блока открытки с жесткой фиксацией размеров
                 const canvas = await html2canvas(postcard, {
                     useCORS: true, 
-                    scale: 2, 
-                    backgroundColor: '#ffffff'
+                    scale: 2, // Увеличиваем разрешение для качества
+                    backgroundColor: '#ffffff', // Задаем белый фон
+                    width: postcard.offsetWidth, // Жестко фиксируем ширину
+                    height: postcard.offsetHeight, // Жестко фиксируем высоту
+                    windowWidth: postcard.offsetWidth, 
+                    windowHeight: postcard.offsetHeight,
+                    scrollX: 0,
+                    scrollY: 0
                 });
 
                 // Возвращаем всё как было
                 postcard.style.boxShadow = originalShadow;
                 postcard.style.borderRadius = originalBorderRadius;
+                
+                const postcardDataUrl = canvas.toDataURL('image/png');
+
+                sendLabel.textContent = 'Загрузка...';
+                sendStatus.textContent = 'Сохраняем открытку...';
                 
                 // Загружаем в ImageBan уже сгенерированную картинку
                 const postcardUrl = await uploadToImageBan(postcardDataUrl);
@@ -861,7 +843,6 @@
                 sendLabel.textContent = 'Отправка...';
                 sendStatus.textContent = 'Отправляем письмо...';
 
-                // Замените на свои ID из EmailJS
                 await emailjs.send('service_zccm7qr', 'template_e1di81m', templateParams);
 
                 sendBtn.classList.add('success');
@@ -877,10 +858,13 @@
                 sendLabel.textContent = 'Отправить';
                 sendStatus.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
                 sendStatus.style.color = '#ff9f9f';
+                
+                // Возвращаем стили в случае ошибки, чтобы не сломать интерфейс
+                postcard.style.boxShadow = '0 24px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1)';
+                postcard.style.borderRadius = '22px';
             }
         }
 
-        // ---------- Обработчики ----------
         uploadBtn.addEventListener('click', () => {
             if (currentMode === 'camera') stopCamera();
             fileInput.click();
