@@ -816,16 +816,37 @@
 
             try {
                 // Делаем снимок блока открытки
-                const canvas = await html2canvas(postcard, {
-                    useCORS: true, // Обязательно для загрузки флага с другого домена
-                    scale: 2, // Увеличиваем разрешение
-                    backgroundColor: null // Прозрачный фон, если нужно
+               const canvas = await html2canvas(postcard, {
+                    useCORS: true, 
+                    scale: 2, 
+                    backgroundColor: '#ffffff', // Задаем белый фон (чтобы не было прозрачности)
+                    width: postcard.offsetWidth, // Жестко фиксируем ширину
+                    height: postcard.offsetHeight, // Жестко фиксируем высоту
+                    windowWidth: postcard.offsetWidth, // Убираем влияние скролла страницы
+                    windowHeight: postcard.offsetHeight,
+                    scrollX: 0,
+                    scrollY: 0
                 });
                 
                 const postcardDataUrl = canvas.toDataURL('image/png');
 
                 sendLabel.textContent = 'Загрузка...';
                 sendStatus.textContent = 'Сохраняем открытку...';
+                
+                  const originalShadow = postcard.style.boxShadow;
+                const originalBorderRadius = postcard.style.borderRadius;
+                postcard.style.boxShadow = 'none';
+                postcard.style.borderRadius = '0px';
+
+                const canvas = await html2canvas(postcard, {
+                    useCORS: true, 
+                    scale: 2, 
+                    backgroundColor: '#ffffff'
+                });
+
+                // Возвращаем всё как было
+                postcard.style.boxShadow = originalShadow;
+                postcard.style.borderRadius = originalBorderRadius;
                 
                 // Загружаем в ImageBan уже сгенерированную картинку
                 const postcardUrl = await uploadToImageBan(postcardDataUrl);
