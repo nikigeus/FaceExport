@@ -9,10 +9,12 @@
     <script>
         (function(){
             emailjs.init({
-                publicKey: "eK7JgxrdbdZ3fGVo6", // <-- замените
+                publicKey: "ВАШ_PUBLIC_KEY", // <-- замените на ваш Public Key
             });
         })();
     </script>
+    <!-- html2canvas для создания снимка открытки -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -448,7 +450,7 @@
         <div class="postcard-wrapper">
             <div class="postcard" id="postcard">
                 <div class="postcard-photo">
-                    <img id="postcardPhoto" alt="Открытка">
+                    <img id="postcardPhoto" alt="Открытка" crossorigin="anonymous">
                     <!-- Логотип конференции Export Online'26 (слева сверху) -->
                     <div class="postcard-logo left" title="Export Online'26">
                         <svg viewBox="0 0 190 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Export Online 26">
@@ -469,7 +471,7 @@
                     </div>
                 </div>
                 <div class="postcard-footer">
-                    <img class="flag" id="postcardFlag" alt="Флаг">
+                    <img class="flag" id="postcardFlag" alt="Флаг" crossorigin="anonymous">
                     <div class="caption" id="postcardCaption">Я экспортирую в …</div>
                 </div>
             </div>
@@ -494,113 +496,42 @@
     (function() {
         // ---------- БАЗА СТРАН (ISO-код + название) ----------
         const COUNTRIES = [
-            { name: 'Россия', code: 'ru' },
-            { name: 'США', code: 'us' },
-            { name: 'Китай', code: 'cn' },
-            { name: 'Германия', code: 'de' },
-            { name: 'Франция', code: 'fr' },
-            { name: 'Великобритания', code: 'gb' },
-            { name: 'Япония', code: 'jp' },
-            { name: 'Италия', code: 'it' },
-            { name: 'Канада', code: 'ca' },
-            { name: 'Бразилия', code: 'br' },
-            { name: 'Индия', code: 'in' },
-            { name: 'Испания', code: 'es' },
-            { name: 'Австралия', code: 'au' },
-            { name: 'Мексика', code: 'mx' },
-            { name: 'Южная Корея', code: 'kr' },
-            { name: 'Турция', code: 'tr' },
-            { name: 'Египет', code: 'eg' },
-            { name: 'Нигерия', code: 'ng' },
-            { name: 'ЮАР', code: 'za' },
-            { name: 'Аргентина', code: 'ar' },
-            { name: 'Швеция', code: 'se' },
-            { name: 'Норвегия', code: 'no' },
-            { name: 'Польша', code: 'pl' },
-            { name: 'Украина', code: 'ua' },
-            { name: 'Казахстан', code: 'kz' },
-            { name: 'Саудовская Аравия', code: 'sa' },
-            { name: 'Индонезия', code: 'id' },
-            { name: 'Таиланд', code: 'th' },
-            { name: 'Вьетнам', code: 'vn' },
-            { name: 'Греция', code: 'gr' },
-            { name: 'Португалия', code: 'pt' },
-            { name: 'Нидерланды', code: 'nl' },
-            { name: 'Швейцария', code: 'ch' },
-            { name: 'Австрия', code: 'at' },
-            { name: 'Бельгия', code: 'be' },
-            { name: 'Израиль', code: 'il' },
-            { name: 'Иран', code: 'ir' },
-            { name: 'Ирак', code: 'iq' },
-            { name: 'Куба', code: 'cu' },
-            { name: 'Новая Зеландия', code: 'nz' },
-            { name: 'Сингапур', code: 'sg' },
-            { name: 'Малайзия', code: 'my' },
-            { name: 'Филиппины', code: 'ph' },
-            { name: 'Пакистан', code: 'pk' },
-            { name: 'Бангладеш', code: 'bd' },
-            { name: 'Эфиопия', code: 'et' },
-            { name: 'Кения', code: 'ke' },
-            { name: 'Марокко', code: 'ma' },
-            { name: 'Алжир', code: 'dz' },
-            { name: 'Тунис', code: 'tn' },
-            { name: 'Чили', code: 'cl' },
-            { name: 'Колумбия', code: 'co' },
-            { name: 'Перу', code: 'pe' },
-            { name: 'Венесуэла', code: 've' },
-            { name: 'Эквадор', code: 'ec' },
-            { name: 'Боливия', code: 'bo' },
-            { name: 'Парагвай', code: 'py' },
-            { name: 'Уругвай', code: 'uy' },
-            { name: 'Финляндия', code: 'fi' },
-            { name: 'Дания', code: 'dk' },
-            { name: 'Исландия', code: 'is' },
-            { name: 'Ирландия', code: 'ie' },
-            { name: 'Чехия', code: 'cz' },
-            { name: 'Словакия', code: 'sk' },
-            { name: 'Венгрия', code: 'hu' },
-            { name: 'Румыния', code: 'ro' },
-            { name: 'Болгария', code: 'bg' },
-            { name: 'Сербия', code: 'rs' },
-            { name: 'Хорватия', code: 'hr' },
-            { name: 'Словения', code: 'si' },
-            { name: 'Босния и Герцеговина', code: 'ba' },
-            { name: 'Черногория', code: 'me' },
-            { name: 'Северная Македония', code: 'mk' },
-            { name: 'Албания', code: 'al' },
-            { name: 'Литва', code: 'lt' },
-            { name: 'Латвия', code: 'lv' },
-            { name: 'Эстония', code: 'ee' },
-            { name: 'Беларусь', code: 'by' },
-            { name: 'Молдова', code: 'md' },
-            { name: 'Грузия', code: 'ge' },
-            { name: 'Армения', code: 'am' },
-            { name: 'Азербайджан', code: 'az' },
-            { name: 'Узбекистан', code: 'uz' },
-            { name: 'Туркменистан', code: 'tm' },
-            { name: 'Кыргызстан', code: 'kg' },
-            { name: 'Таджикистан', code: 'tj' },
-            { name: 'Монголия', code: 'mn' },
-            { name: 'Непал', code: 'np' },
-            { name: 'Бутан', code: 'bt' },
-            { name: 'Шри-Ланка', code: 'lk' },
-            { name: 'Мьянма', code: 'mm' },
-            { name: 'Камбоджа', code: 'kh' },
-            { name: 'Лаос', code: 'la' },
-            { name: 'Бруней', code: 'bn' },
-            { name: 'Восточный Тимор', code: 'tl' },
-            { name: 'Папуа — Новая Гвинея', code: 'pg' },
-            { name: 'Фиджи', code: 'fj' },
-            { name: 'Самоа', code: 'ws' },
-            { name: 'Тонга', code: 'to' },
-            { name: 'Вануату', code: 'vu' },
-            { name: 'Соломоновы Острова', code: 'sb' },
-            { name: 'Микронезия', code: 'fm' },
-            { name: 'Маршалловы Острова', code: 'mh' },
-            { name: 'Палау', code: 'pw' },
-            { name: 'Науру', code: 'nr' },
-            { name: 'Тувалу', code: 'tv' },
-            { name: 'Кирибати', code: 'ki' },
+            { name: 'Россия', code: 'ru' }, { name: 'США', code: 'us' }, { name: 'Китай', code: 'cn' },
+            { name: 'Германия', code: 'de' }, { name: 'Франция', code: 'fr' }, { name: 'Великобритания', code: 'gb' },
+            { name: 'Япония', code: 'jp' }, { name: 'Италия', code: 'it' }, { name: 'Канада', code: 'ca' },
+            { name: 'Бразилия', code: 'br' }, { name: 'Индия', code: 'in' }, { name: 'Испания', code: 'es' },
+            { name: 'Австралия', code: 'au' }, { name: 'Мексика', code: 'mx' }, { name: 'Южная Корея', code: 'kr' },
+            { name: 'Турция', code: 'tr' }, { name: 'Египет', code: 'eg' }, { name: 'Нигерия', code: 'ng' },
+            { name: 'ЮАР', code: 'za' }, { name: 'Аргентина', code: 'ar' }, { name: 'Швеция', code: 'se' },
+            { name: 'Норвегия', code: 'no' }, { name: 'Польша', code: 'pl' }, { name: 'Украина', code: 'ua' },
+            { name: 'Казахстан', code: 'kz' }, { name: 'Саудовская Аравия', code: 'sa' }, { name: 'Индонезия', code: 'id' },
+            { name: 'Таиланд', code: 'th' }, { name: 'Вьетнам', code: 'vn' }, { name: 'Греция', code: 'gr' },
+            { name: 'Португалия', code: 'pt' }, { name: 'Нидерланды', code: 'nl' }, { name: 'Швейцария', code: 'ch' },
+            { name: 'Австрия', code: 'at' }, { name: 'Бельгия', code: 'be' }, { name: 'Израиль', code: 'il' },
+            { name: 'Иран', code: 'ir' }, { name: 'Ирак', code: 'iq' }, { name: 'Куба', code: 'cu' },
+            { name: 'Новая Зеландия', code: 'nz' }, { name: 'Сингапур', code: 'sg' }, { name: 'Малайзия', code: 'my' },
+            { name: 'Филиппины', code: 'ph' }, { name: 'Пакистан', code: 'pk' }, { name: 'Бангладеш', code: 'bd' },
+            { name: 'Эфиопия', code: 'et' }, { name: 'Кения', code: 'ke' }, { name: 'Марокко', code: 'ma' },
+            { name: 'Алжир', code: 'dz' }, { name: 'Тунис', code: 'tn' }, { name: 'Чили', code: 'cl' },
+            { name: 'Колумбия', code: 'co' }, { name: 'Перу', code: 'pe' }, { name: 'Венесуэла', code: 've' },
+            { name: 'Эквадор', code: 'ec' }, { name: 'Боливия', code: 'bo' }, { name: 'Парагвай', code: 'py' },
+            { name: 'Уругвай', code: 'uy' }, { name: 'Финляндия', code: 'fi' }, { name: 'Дания', code: 'dk' },
+            { name: 'Исландия', code: 'is' }, { name: 'Ирландия', code: 'ie' }, { name: 'Чехия', code: 'cz' },
+            { name: 'Словакия', code: 'sk' }, { name: 'Венгрия', code: 'hu' }, { name: 'Румыния', code: 'ro' },
+            { name: 'Болгария', code: 'bg' }, { name: 'Сербия', code: 'rs' }, { name: 'Хорватия', code: 'hr' },
+            { name: 'Словения', code: 'si' }, { name: 'Босния и Герцеговина', code: 'ba' }, { name: 'Черногория', code: 'me' },
+            { name: 'Северная Македония', code: 'mk' }, { name: 'Албания', code: 'al' }, { name: 'Литва', code: 'lt' },
+            { name: 'Латвия', code: 'lv' }, { name: 'Эстония', code: 'ee' }, { name: 'Беларусь', code: 'by' },
+            { name: 'Молдова', code: 'md' }, { name: 'Грузия', code: 'ge' }, { name: 'Армения', code: 'am' },
+            { name: 'Азербайджан', code: 'az' }, { name: 'Узбекистан', code: 'uz' }, { name: 'Туркменистан', code: 'tm' },
+            { name: 'Кыргызстан', code: 'kg' }, { name: 'Таджикистан', code: 'tj' }, { name: 'Монголия', code: 'mn' },
+            { name: 'Непал', code: 'np' }, { name: 'Бутан', code: 'bt' }, { name: 'Шри-Ланка', code: 'lk' },
+            { name: 'Мьянма', code: 'mm' }, { name: 'Камбоджа', code: 'kh' }, { name: 'Лаос', code: 'la' },
+            { name: 'Бруней', code: 'bn' }, { name: 'Восточный Тимор', code: 'tl' }, { name: 'Папуа — Новая Гвинея', code: 'pg' },
+            { name: 'Фиджи', code: 'fj' }, { name: 'Самоа', code: 'ws' }, { name: 'Тонга', code: 'to' },
+            { name: 'Вануату', code: 'vu' }, { name: 'Соломоновы Острова', code: 'sb' }, { name: 'Микронезия', code: 'fm' },
+            { name: 'Маршалловы Острова', code: 'mh' }, { name: 'Палау', code: 'pw' }, { name: 'Науру', code: 'nr' },
+            { name: 'Тувалу', code: 'tv' }, { name: 'Кирибати', code: 'ki' },
         ];
 
         // ---------- DOM элементы ----------
@@ -630,7 +561,7 @@
 
         // ---------- Переменные ----------
         let stream = null;
-        let currentMode = 'idle'; // 'idle' | 'camera'
+        let currentMode = 'idle';
         let processing = false;
         let lastCountry = null;
 
@@ -663,7 +594,6 @@
             emailInput.value = '';
         }
 
-        // Простейшая "кодовая" функция: получаем хеш из данных изображения
         function imageToCode(imgElement) {
             return new Promise((resolve) => {
                 const canvas = document.createElement('canvas');
@@ -688,7 +618,6 @@
             return COUNTRIES[index];
         }
 
-        // Собираем открытку из фото и страны
         function buildPostcard(photoSrc, country) {
             if (!photoSrc || !country) return;
             postcardPhoto.src = photoSrc;
@@ -699,7 +628,6 @@
             resetSendState();
         }
 
-        // Основная функция обработки изображения
         async function processImageFromElement(imgElement, sourceSrc) {
             if (processing) return;
             processing = true;
@@ -717,12 +645,10 @@
                 const country = pickCountryByCode(normalized);
                 lastCountry = country;
 
-                // Отображаем флаг картинкой с CDN flagcdn.com
                 flagDisplay.innerHTML = `<img src="https://flagcdn.com/w320/${country.code}.png" alt="${country.name}" loading="lazy">`;
                 countryName.textContent = country.name;
                 hashHint.textContent = `код: ${hashStr} → ${normalized.toFixed(3)}`;
 
-                // Формируем открытку
                 const photoSrc = sourceSrc || (imgElement.tagName === 'IMG' ? imgElement.src : null);
                 if (photoSrc) {
                     buildPostcard(photoSrc, country);
@@ -738,7 +664,6 @@
             }
         }
 
-        // Обработка файла
         function handleFile(file) {
             if (!file || !file.type.startsWith('image/')) {
                 setStatus('❌ Пожалуйста, выберите изображение', true);
@@ -767,9 +692,7 @@
 
         // ---------- Камера ----------
         async function startCamera() {
-            if (stream) {
-                stopCamera();
-            }
+            if (stream) stopCamera();
             try {
                 setStatus('🎥 Запрос доступа к камере...');
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -834,7 +757,6 @@
             currentMode = 'idle';
         }
 
-        // ---------- Сброс / очистка ----------
         function resetAll() {
             stopCamera();
             previewImg.src = '';
@@ -847,43 +769,28 @@
             fileInput.value = '';
         }
 
-        // ---------- Отправка открытки на email ----------
+        // ---------- Отправка ----------
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
 
-        // Загрузка изображения в ImageBan
         async function uploadToImageBan(imageDataUrl) {
-            // ВАЖНО: ваш SECRET_KEY. Он будет виден в исходном коде страницы.
-            // Для демо-сервиса это допустимо, но не используйте этот ключ для критичных задач.
-            const SECRET_KEY = 'XX7T7VcZtIET2banpnspCGt0QZ89Gu0Fve5';
-
-            // Преобразуем Data URL в Blob
+            const SECRET_KEY = 'XX7T7VcZtIET2banpnspCGt0QZ89Gu0Fve5'; // Ваш ключ
             const blob = await (await fetch(imageDataUrl)).blob();
 
             const formData = new FormData();
             formData.append('image', blob, 'postcard.jpg');
-            formData.append('name', 'postcard.jpg');
 
             const response = await fetch('https://api.imageban.ru/v1', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${SECRET_KEY}`
-                },
+                headers: { 'Authorization': `Bearer ${SECRET_KEY}` },
                 body: formData
             });
 
-            if (!response.ok) {
-                throw new Error('Ошибка загрузки в ImageBan');
-            }
-
+            if (!response.ok) throw new Error('Ошибка загрузки в ImageBan');
             const result = await response.json();
+            if (!result.success) throw new Error(result.error?.message || 'Неизвестная ошибка ImageBan');
 
-            if (!result.success) {
-                throw new Error(result.error?.message || 'Неизвестная ошибка ImageBan');
-            }
-
-            // Возвращаем прямую ссылку на картинку
             return result.data.link;
         }
 
@@ -903,29 +810,39 @@
             }
 
             sendBtn.disabled = true;
-            sendLabel.textContent = 'Загрузка фото...';
-            sendStatus.textContent = 'Сохраняем вашу открытку...';
+            sendLabel.textContent = 'Готовим...';
+            sendStatus.textContent = 'Собираем вашу открытку...';
             sendStatus.style.color = '#a0c0e0';
 
             try {
-                // 1. Загружаем фото в ImageBan и получаем ссылку
-                const postcardUrl = await uploadToImageBan(previewImg.src);
+                // Делаем снимок блока открытки
+                const canvas = await html2canvas(postcard, {
+                    useCORS: true, // Обязательно для загрузки флага с другого домена
+                    scale: 2, // Увеличиваем разрешение
+                    backgroundColor: null // Прозрачный фон, если нужно
+                });
+                
+                const postcardDataUrl = canvas.toDataURL('image/png');
 
-                // 2. Готовим параметры для EmailJS
+                sendLabel.textContent = 'Загрузка...';
+                sendStatus.textContent = 'Сохраняем открытку...';
+                
+                // Загружаем в ImageBan уже сгенерированную картинку
+                const postcardUrl = await uploadToImageBan(postcardDataUrl);
+
                 const templateParams = {
                     to_email: email,
                     country_name: lastCountry.name,
                     country_code: lastCountry.code,
-                    postcard_link: postcardUrl // <-- Ссылка на картинку
+                    postcard_link: postcardUrl
                 };
 
-                // 3. Отправляем через EmailJS
                 sendLabel.textContent = 'Отправка...';
                 sendStatus.textContent = 'Отправляем письмо...';
 
-                await emailjs.send('service_zccm7qr', 'template_e1di81m', templateParams); // <-- замените
+                // Замените на свои ID из EmailJS
+                await emailjs.send('ВАШ_SERVICE_ID', 'ВАШ_TEMPLATE_ID', templateParams);
 
-                // Успех
                 sendBtn.classList.add('success');
                 sendBtn.disabled = false;
                 sendLabel.textContent = '';
@@ -942,7 +859,7 @@
             }
         }
 
-        // ---------- Назначение обработчиков ----------
+        // ---------- Обработчики ----------
         uploadBtn.addEventListener('click', () => {
             if (currentMode === 'camera') stopCamera();
             fileInput.click();
@@ -950,9 +867,7 @@
 
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) {
-                handleFile(file);
-            }
+            if (file) handleFile(file);
             fileInput.value = '';
         });
 
@@ -965,13 +880,10 @@
             }
         });
 
-        // Инициализация
         resetAll();
 
         window.addEventListener('beforeunload', () => {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
+            if (stream) stream.getTracks().forEach(track => track.stop());
         });
     })();
 </script>
